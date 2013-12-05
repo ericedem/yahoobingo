@@ -1,10 +1,11 @@
 var util = require('./util');
 var io = require('socket.io-client');
-//var socket = io.connect('ws://yahoobingo.herokuapp.com');
-socket.on('connect',function(){
+var client = io.connect('ws://yahoobingo.herokuapp.com');
+client.on('connect',function(){
 	client.emit('register',{
 		name: "Xor",
-		email: 'ericedem@gmail.com'
+		email: 'ericedem@gmail.com',
+		url: 'https://github.com/ericmedem/yahoobingo'
 	});
 });
 
@@ -26,13 +27,16 @@ client.on('card',function(card){
 		var location = util.findNumber(card.slots, number);
 
 		if (location){
+			console.log('number found');
 			entries.slots[location.row][location.col] = true;
+			console.log(entries.slots);
 
-			if(checkRow(entries.slots, location.row) ||
-			   checkCol(entries.slots, location.col) ||
-			   checkLeftDiag(entries.slots) ||
-			   checkRightDiag(entries.slots)){
-			   	console.log('bing');
+			if(util.checkRow(entries.slots, location.row) ||
+			   util.checkCol(entries.slots, location.col) ||
+			   util.checkLeftDiag(entries.slots) ||
+			   util.checkRightDiag(entries.slots)){
+			   	console.log('bingo');
+			   	client.emit('bingo');
 			}
 		}
 	});
